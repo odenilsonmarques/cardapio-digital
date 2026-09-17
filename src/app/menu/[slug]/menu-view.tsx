@@ -40,6 +40,7 @@ export function MenuView({
 }: MenuViewProps) {
   const [cart, setCart] = useState<Cart>({});
   const [showCheckout, setShowCheckout] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const boundCheckout = useMemo(
     () => checkoutAction.bind(null, slug),
@@ -64,6 +65,17 @@ export function MenuView({
       if (next[id] <= 0) delete next[id];
       return next;
     });
+  }
+
+  async function copyPixKey() {
+    if (!state.pixKey) return;
+    try {
+      await navigator.clipboard.writeText(state.pixKey);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
   }
 
   const orderedItems = Object.entries(cart)
@@ -296,14 +308,40 @@ export function MenuView({
               </div>
               {state.success ? (
                 <div className="rounded-lg border border-success/30 bg-success/10 px-4 py-3 text-sm">
-                  {state.paymentInstructions ? (
-                    <div className="flex flex-col gap-1">
-                      <p className="font-semibold">Instruções de pagamento</p>
-                      <p className="whitespace-pre-line text-muted">
-                        {state.paymentInstructions}
-                      </p>
-                    </div>
-                  ) : (
+              {state.pixKey ? (
+                <div className="flex flex-col gap-3">
+                  <div>
+                    <p className="font-semibold">Pague com Pix</p>
+                    <p className="mt-0.5 text-sm text-muted">
+                      Use a chave abaixo para fazer a transferência.
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 rounded-lg border border-border bg-surface px-3.5 py-2.5">
+                    <span className="min-w-0 break-all font-medium">
+                      {state.pixKey}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={copyPixKey}
+                      className="shrink-0 rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-contrast transition-colors hover:bg-accent-hover"
+                    >
+                      {copied ? "Copiado!" : "Copiar chave"}
+                    </button>
+                  </div>
+                  {state.paymentInstructions && (
+                    <p className="whitespace-pre-line text-sm text-muted">
+                      {state.paymentInstructions}
+                    </p>
+                  )}
+                </div>
+              ) : state.paymentInstructions ? (
+                <div className="flex flex-col gap-1">
+                  <p className="font-semibold">Instruções de pagamento</p>
+                  <p className="whitespace-pre-line text-muted">
+                    {state.paymentInstructions}
+                  </p>
+                </div>
+              ) : (
                     <p className="text-center text-muted">
                       Após confirmar, você receberá as instruções de pagamento.
                     </p>

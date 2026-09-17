@@ -8,6 +8,7 @@ export type CheckoutState = {
   error?: string;
   success?: string;
   paymentInstructions?: string;
+  pixKey?: string;
 };
 
 const checkoutSchema = z.object({
@@ -95,5 +96,6 @@ export async function checkoutAction(
   return {
     success: "Pedido enviado!",
     paymentInstructions: menu.paymentInstructions ?? undefined,
+    pixKey: menu.pixKey ?? undefined,
   };
 }
