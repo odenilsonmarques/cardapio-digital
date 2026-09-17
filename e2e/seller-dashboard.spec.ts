@@ -18,7 +18,7 @@ test.describe("Dashboard do seller", () => {
 
   test("cria e renomeia uma categoria", async ({ page }) => {
     await login(page, SELLER);
-    await page.goto("/admin/categorias");
+    await page.goto("/vendedor/categorias");
 
     await page.getByLabel("Nome").fill("Teste Cat");
     await page.getByRole("button", { name: "Adicionar categoria" }).click();
@@ -40,7 +40,7 @@ test.describe("Dashboard do seller", () => {
 
   test("cria um produto e o vê listado", async ({ page }) => {
     await login(page, SELLER);
-    await page.goto("/admin/produtos");
+    await page.goto("/vendedor/produtos");
 
     await page.getByLabel("Nome").fill("Produto E2E");
     await page.getByLabel("Preço (R$)").fill("12.5");
@@ -51,7 +51,7 @@ test.describe("Dashboard do seller", () => {
 
   test("salva configurações do cardápio", async ({ page }) => {
     await login(page, SELLER);
-    await page.goto("/admin");
+    await page.goto("/vendedor");
 
     const nameInput = page.getByLabel("Nome do negócio");
     await nameInput.fill("E2E Hambúrgueria");

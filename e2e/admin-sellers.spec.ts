@@ -4,7 +4,7 @@ import { ADMIN, SELLER, login } from "./helpers";
 test.describe("Painel de vendedores (admin)", () => {
   test("lista vendedores com métricas", async ({ page }) => {
     await login(page, ADMIN);
-    await page.goto("/admin/admin");
+    await page.goto("/admin/vendedores");
     await expect(
       page.getByRole("heading", { name: "Vendedores" })
     ).toBeVisible();
@@ -16,7 +16,7 @@ test.describe("Painel de vendedores (admin)", () => {
 
   test("bloqueia e desbloqueia um vendedor", async ({ page }) => {
     await login(page, ADMIN);
-    await page.goto("/admin/admin");
+    await page.goto("/admin/vendedores");
 
     const row = page.getByText("E2E Hambúrgueria").locator("..").locator("..").locator("..");
     await row.getByRole("button", { name: "Bloquear" }).click();
@@ -26,10 +26,10 @@ test.describe("Painel de vendedores (admin)", () => {
     await expect(row.getByText("Ativo")).toBeVisible();
   });
 
-  test("seller não acessa /admin/admin (redirect)", async ({ page }) => {
+  test("seller não acessa /admin/vendedores (redirect)", async ({ page }) => {
     await login(page, SELLER);
-    await page.goto("/admin/admin");
-    await page.waitForURL("**/admin");
+    await page.goto("/admin/vendedores");
+    await page.waitForURL("**/vendedor");
     await expect(
       page.getByRole("heading", { name: "Visão geral" })
     ).toBeVisible();

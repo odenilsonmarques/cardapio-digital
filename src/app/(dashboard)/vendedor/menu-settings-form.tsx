@@ -19,6 +19,7 @@ export function MenuSettingsForm({
     description: string | null;
     slug: string;
     paymentInstructions: string | null;
+    pixKey: string | null;
   } | null;
 }) {
   const [state, formAction, pending] = useActionState(
@@ -74,6 +75,18 @@ export function MenuSettingsForm({
           rows={3}
           defaultValue={menu?.paymentInstructions ?? ""}
           placeholder="Ex.: Faça o Pix para a chave 11-99999-9999 e envie o comprovante no WhatsApp."
+        />
+      </Field>
+      <Field
+        label="Chave Pix"
+        htmlFor="pixKey"
+        hint="Chave que o cliente poderá copiar com um clique após o pedido."
+      >
+        <Input
+          id="pixKey"
+          name="pixKey"
+          defaultValue={menu?.pixKey ?? ""}
+          placeholder="Ex.: 11-99999-9999 ou sua@email.com"
         />
       </Field>
       <div>

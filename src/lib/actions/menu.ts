@@ -15,6 +15,7 @@ const menuSchema = z.object({
     .min(2, "Slug muito curto")
     .regex(/^[a-z0-9-]+$/, "Use apenas letras minúsculas, números e hífens"),
   paymentInstructions: z.string().optional(),
+  pixKey: z.string().optional(),
 });
 
 export async function updateMenuAction(
@@ -28,6 +29,7 @@ export async function updateMenuAction(
     description: formData.get("description") || undefined,
     slug: formData.get("slug"),
     paymentInstructions: formData.get("paymentInstructions") || undefined,
+    pixKey: formData.get("pixKey") || undefined,
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message };
