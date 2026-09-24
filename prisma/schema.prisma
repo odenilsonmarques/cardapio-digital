@@ -106,7 +106,9 @@ model Order {
   customerAddress String?
   notes           String?
   status          String      @default("pending")
+  deliveryType    String      @default("delivery")
   total           Float
+  trackingToken   String?     @unique
   createdAt       DateTime    @default(now())
   items           OrderItem[]
 }

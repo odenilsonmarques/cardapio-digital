@@ -1,5 +1,6 @@
 "use server";
 
+import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
@@ -9,10 +10,12 @@ export type CheckoutState = {
   success?: string;
   paymentInstructions?: string;
   pixKey?: string;
+  trackingUrl?: string;
 };
 
 const checkoutSchema = z.object({
   customerName: z.string().min(2, "Informe seu nome"),
+  deliveryType: z.enum(["pickup", "delivery"]).default("delivery"),
   customerPhone: z.string().optional(),
   customerAddress: z.string().optional(),
   notes: z.string().optional(),
@@ -48,6 +51,7 @@ export async function checkoutAction(
 
   const parsed = checkoutSchema.safeParse({
     customerName: formData.get("customerName"),
+    deliveryType: formData.get("deliveryType") || undefined,
     customerPhone: formData.get("customerPhone") || undefined,
     customerAddress: formData.get("customerAddress") || undefined,
     notes: formData.get("notes") || undefined,
@@ -83,11 +87,13 @@ export async function checkoutAction(
     0
   );
 
-  await prisma.order.create({
+  const order = await prisma.order.create({
     data: {
       menuId: menu.id,
       ...customer,
       total,
+      deliveryType: customer.deliveryType,
+      trackingToken: randomBytes(12).toString("hex"),
       items: { create: orderItems },
     },
   });
@@ -97,5 +103,6 @@ export async function checkoutAction(
     success: "Pedido enviado!",
     paymentInstructions: menu.paymentInstructions ?? undefined,
     pixKey: menu.pixKey ?? undefined,
+    trackingUrl: `/rastrear/${order.trackingToken}`,
   };
 }
