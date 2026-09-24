@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useTransition } from "react";
 import { updateOrderStatusAction } from "@/lib/actions/orders";
 import { formatCurrency } from "@/lib/format";
 
 const statusOptions = [
   { value: "pending", label: "Pendente" },
   { value: "confirmed", label: "Confirmado" },
+  { value: "ready_for_pickup", label: "Pronto para retirada" },
+  { value: "out_for_delivery", label: "Saiu para entrega" },
   { value: "done", label: "Concluído" },
   { value: "cancelled", label: "Cancelado" },
 ];
@@ -22,6 +24,7 @@ export function OrderCard({
     notes: string | null;
     status: string;
     statusLabel: string;
+    deliveryType: string;
     total: number;
     createdAt: Date;
     items: { name: string; quantity: number; price: number }[];
@@ -32,11 +35,23 @@ export function OrderCard({
     timeStyle: "short",
   }).format(order.createdAt);
 
+  const [isPending, startTransition] = useTransition();
   const [status, setStatus] = useState(order.status);
-
-  useEffect(() => {
+  const [prevOrderStatus, setPrevOrderStatus] = useState(order.status);
+  if (order.status !== prevOrderStatus) {
+    setPrevOrderStatus(order.status);
     setStatus(order.status);
-  }, [order.status]);
+  }
+
+  function handleStatusChange(value: string) {
+    setStatus(value);
+    const formData = new FormData();
+    formData.append("id", order.id);
+    formData.append("status", value);
+    startTransition(() => {
+      updateOrderStatusAction(formData);
+    });
+  }
 
   return (
     <article className="rounded-xl border border-border bg-surface p-5">
@@ -49,18 +64,17 @@ export function OrderCard({
             {date} · Pedido #{order.id.slice(0, 8)}
           </p>
         </div>
-        <form action={updateOrderStatusAction} className="flex items-center gap-2">
-          <input type="hidden" name="id" value={order.id} />
+        <div className="flex items-center gap-2">
           <label htmlFor={`status-${order.id}`} className="sr-only">
             Status do pedido
           </label>
           <select
             id={`status-${order.id}`}
-            name="status"
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            onBlur={(e) => e.currentTarget.form?.requestSubmit()}
-            className="rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium"
+            onChange={(e) => handleStatusChange(e.target.value)}
+            disabled={isPending}
+            aria-busy={isPending}
+            className="rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium disabled:opacity-60"
           >
             {statusOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -68,7 +82,7 @@ export function OrderCard({
               </option>
             ))}
           </select>
-        </form>
+        </div>
       </div>
 
       <ul className="mt-4 flex flex-col divide-y divide-border">
@@ -94,27 +108,29 @@ export function OrderCard({
         </span>
       </div>
 
-      {(order.customerPhone || order.customerAddress || order.notes) && (
-        <div className="mt-4 flex flex-col gap-1 rounded-lg bg-surface-muted/50 px-4 py-3 text-sm">
-          {order.customerPhone && (
-            <p>
-              <span className="font-medium">Telefone:</span>{" "}
-              {order.customerPhone}
-            </p>
-          )}
-          {order.customerAddress && (
-            <p>
-              <span className="font-medium">Entrega:</span>{" "}
-              {order.customerAddress}
-            </p>
-          )}
-          {order.notes && (
-            <p>
-              <span className="font-medium">Obs.:</span> {order.notes}
-            </p>
-          )}
-        </div>
-      )}
+      <div className="mt-4 flex flex-col gap-1 rounded-lg bg-surface-muted/50 px-4 py-3 text-sm">
+        <p>
+          <span className="font-medium">Tipo:</span>{" "}
+          {order.deliveryType === "pickup" ? "Retirada" : "Entrega"}
+        </p>
+        {order.customerPhone && (
+          <p>
+            <span className="font-medium">Telefone:</span>{" "}
+            {order.customerPhone}
+          </p>
+        )}
+        {order.deliveryType === "delivery" && order.customerAddress && (
+          <p>
+            <span className="font-medium">Endereço:</span>{" "}
+            {order.customerAddress}
+          </p>
+        )}
+        {order.notes && (
+          <p>
+            <span className="font-medium">Obs.:</span> {order.notes}
+          </p>
+        )}
+      </div>
     </article>
   );
 }
