@@ -5,7 +5,6 @@ import { updateOrderStatusAction } from "@/lib/actions/orders";
 import { formatCurrency } from "@/lib/format";
 
 const statusOptions = [
-  { value: "pending", label: "Pendente" },
   { value: "confirmed", label: "Confirmado" },
   { value: "ready_for_pickup", label: "Pronto para retirada" },
   { value: "out_for_delivery", label: "Saiu para entrega" },
@@ -76,6 +75,11 @@ export function OrderCard({
             aria-busy={isPending}
             className="rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium disabled:opacity-60"
           >
+            {status === "pending" && (
+              <option value="pending" disabled>
+                Pendente
+              </option>
+            )}
             {statusOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}

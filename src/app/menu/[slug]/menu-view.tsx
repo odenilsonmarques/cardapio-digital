@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useMemo, useRef, useState } from "react";
+import { startTransition, useActionState, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { checkoutAction, CheckoutState } from "@/lib/actions/checkout";
 import { Button } from "@/components/ui/Button";
@@ -74,7 +74,9 @@ export function MenuView({
       formRef.current?.reset();
       setCart({});
       setDeliveryType("delivery");
-      resetAction(new FormData());
+      startTransition(() => {
+        resetAction(new FormData());
+      });
     }
   }
 

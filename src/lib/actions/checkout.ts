@@ -31,9 +31,12 @@ const checkoutSchema = z.object({
 
 export async function checkoutAction(
   slug: string,
+  isReset: boolean,
   prevState: CheckoutState,
   formData: FormData
 ): Promise<CheckoutState> {
+  if (isReset) return {};
+
   const menu = await prisma.menu.findUnique({ where: { slug } });
   if (!menu) return { error: "Cardápio não encontrado." };
 
