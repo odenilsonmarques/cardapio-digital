@@ -9,7 +9,14 @@ export async function updateOrderStatusAction(formData: FormData) {
   const id = formData.get("id") as string;
   const status = formData.get("status") as string;
 
-  const valid = ["pending", "confirmed", "done", "cancelled"];
+  const valid = [
+    "pending",
+    "confirmed",
+    "ready_for_pickup",
+    "out_for_delivery",
+    "done",
+    "cancelled",
+  ];
   if (!valid.includes(status)) return;
 
   const order = await prisma.order.findFirst({

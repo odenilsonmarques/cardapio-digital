@@ -22,7 +22,7 @@ export default defineConfig({
   webServer: {
     command: `DATABASE_URL="file:./e2e.db" NEXTAUTH_URL="${baseURL}" npx next dev -p ${E2E_PORT}`,
     url: baseURL,
-    reuseExistingServer: true,
+    reuseExistingServer: false,
     timeout: 120_000,
   },
 });

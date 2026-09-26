@@ -10,6 +10,8 @@ export const metadata = {
 const statusLabels: Record<string, string> = {
   pending: "Pendente",
   confirmed: "Confirmado",
+  ready_for_pickup: "Pronto para retirada",
+  out_for_delivery: "Saiu para entrega",
   done: "Concluído",
   cancelled: "Cancelado",
 };
@@ -57,6 +59,7 @@ export default async function OrdersPage() {
               notes: order.notes,
               status: order.status,
               statusLabel: statusLabels[order.status] ?? order.status,
+              deliveryType: order.deliveryType,
               total: order.total,
               createdAt: order.createdAt,
               items: order.items.map((i) => ({
