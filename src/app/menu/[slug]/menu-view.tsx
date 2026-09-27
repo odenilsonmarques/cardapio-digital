@@ -27,6 +27,7 @@ type MenuViewProps = {
   slug: string;
   menuName: string;
   menuDescription: string | null;
+  deliveryFee: number;
   categories: Category[];
 };
 
@@ -36,6 +37,7 @@ export function MenuView({
   slug,
   menuName,
   menuDescription,
+  deliveryFee,
   categories,
 }: MenuViewProps) {
   const [cart, setCart] = useState<Cart>({});
@@ -83,10 +85,12 @@ export function MenuView({
   const allProducts = categories.flatMap((c) => c.products);
 
   const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
-  const totalPrice = Object.entries(cart).reduce((sum, [id, qty]) => {
+  const itemsPrice = Object.entries(cart).reduce((sum, [id, qty]) => {
     const product = allProducts.find((p) => p.id === id);
     return sum + (product ? product.price * qty : 0);
   }, 0);
+  const effectiveFee = deliveryType === "delivery" ? deliveryFee : 0;
+  const totalPrice = itemsPrice + effectiveFee;
 
   function updateQty(id: string, delta: number) {
     setCart((prev) => {
@@ -328,7 +332,12 @@ export function MenuView({
                       onChange={() => setDeliveryType("delivery")}
                       className="sr-only"
                     />
-                    Entrega
+                    <span>Entrega</span>
+                    {deliveryFee > 0 && (
+                      <span className="text-xs tabular-nums">
+                        +{formatCurrency(deliveryFee)}
+                      </span>
+                    )}
                   </label>
                   <label
                     className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors ${
@@ -397,6 +406,18 @@ export function MenuView({
                 />
               ))}
 
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted">Subtotal</span>
+                <span className="tabular-nums">{formatCurrency(itemsPrice)}</span>
+              </div>
+              {deliveryType === "delivery" && effectiveFee > 0 && (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted">Taxa de entrega</span>
+                  <span className="tabular-nums">
+                    {formatCurrency(effectiveFee)}
+                  </span>
+                </div>
+              )}
               <div className="flex items-center justify-between border-t border-border pt-4">
                 <span className="font-medium">Total</span>
                 <span className="font-semibold tabular-nums">

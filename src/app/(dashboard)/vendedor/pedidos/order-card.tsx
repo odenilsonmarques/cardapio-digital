@@ -24,6 +24,7 @@ export function OrderCard({
     status: string;
     statusLabel: string;
     deliveryType: string;
+    deliveryFee: number;
     total: number;
     createdAt: Date;
     items: { name: string; quantity: number; price: number }[];
@@ -89,7 +90,7 @@ export function OrderCard({
         </div>
       </div>
 
-      <ul className="mt-4 flex flex-col divide-y divide-border">
+      <ul className="mt-4 flex flex-col divide-y divide-border border-b border-border pb-1">
         {order.items.map((item, i) => (
           <li
             key={i}
@@ -105,11 +106,21 @@ export function OrderCard({
         ))}
       </ul>
 
-      <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
-        <span className="text-sm text-muted">Total</span>
-        <span className="font-semibold tabular-nums">
-          {formatCurrency(order.total)}
-        </span>
+      <div className="mt-3 flex flex-col gap-1">
+        {order.deliveryFee > 0 && (
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted">Taxa de entrega</span>
+            <span className="tabular-nums">
+              {formatCurrency(order.deliveryFee)}
+            </span>
+          </div>
+        )}
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-muted">Total</span>
+          <span className="font-semibold tabular-nums">
+            {formatCurrency(order.total)}
+          </span>
+        </div>
       </div>
 
       <div className="mt-4 flex flex-col gap-1 rounded-lg bg-surface-muted/50 px-4 py-3 text-sm">

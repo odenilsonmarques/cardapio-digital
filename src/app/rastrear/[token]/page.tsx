@@ -47,6 +47,7 @@ export default async function TrackOrderPage({
           price: item.price,
         }))}
         total={order.total}
+        deliveryFee={order.deliveryFee}
       />
     </main>
   );

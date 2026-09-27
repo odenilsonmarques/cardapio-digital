@@ -69,6 +69,7 @@ export default async function PublicMenuPage({
       slug={slug}
       menuName={menu.name}
       menuDescription={menu.description}
+      deliveryFee={menu.deliveryFee}
       categories={menu.categories.map((category) => ({
         id: category.id,
         name: category.name,

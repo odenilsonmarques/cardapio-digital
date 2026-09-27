@@ -12,7 +12,7 @@ export async function login(page: Page, creds: { email: string; password: string
   await page.getByLabel("E-mail").fill(creds.email);
   await page.getByLabel("Senha").fill(creds.password);
   await page.getByRole("button", { name: "Entrar" }).click();
-  await page.waitForURL("**/admin");
+  await page.waitForURL(/\/(admin|vendedor)/);
   await expect(
     page.getByRole("navigation", { name: "Navegação do painel" })
   ).toBeVisible();

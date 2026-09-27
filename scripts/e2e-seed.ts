@@ -39,17 +39,18 @@ async function main() {
 
   let menu = await prisma.menu.findUnique({ where: { userId: seller.id } });
   if (menu) {
-    await prisma.menu.update({
-      where: { id: menu.id },
-      data: {
-        slug: "e2e-hamburgueria",
-        name: "E2E Hambúrgueria",
-        description: "Cardápio de teste E2E.",
-        paymentInstructions:
-          "Faça o Pix para a chave e2e@teste.com e envie o comprovante.",
-        isActive: true,
-      },
-    });
+  await prisma.menu.update({
+    where: { id: menu.id },
+    data: {
+      slug: "e2e-hamburgueria",
+      name: "E2E Hambúrgueria",
+      description: "Cardápio de teste E2E.",
+      paymentInstructions:
+        "Faça o Pix para a chave e2e@teste.com e envie o comprovante.",
+      isActive: true,
+      deliveryFee: 5,
+    },
+  });
   } else {
     menu = await prisma.menu.create({
       data: {

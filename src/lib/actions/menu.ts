@@ -16,6 +16,11 @@ const menuSchema = z.object({
     .regex(/^[a-z0-9-]+$/, "Use apenas letras minúsculas, números e hífens"),
   paymentInstructions: z.string().optional(),
   pixKey: z.string().optional(),
+  deliveryFee: z.coerce
+    .number()
+    .min(0, "Taxa de entrega não pode ser negativa")
+    .max(9999, "Taxa de entrega muito alta")
+    .default(0),
 });
 
 export async function updateMenuAction(
@@ -30,6 +35,7 @@ export async function updateMenuAction(
     slug: formData.get("slug"),
     paymentInstructions: formData.get("paymentInstructions") || undefined,
     pixKey: formData.get("pixKey") || undefined,
+    deliveryFee: formData.get("deliveryFee") || undefined,
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message };

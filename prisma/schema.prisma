@@ -67,6 +67,7 @@ model Menu {
   paymentInstructions String?
   pixKey              String?
   isActive      Boolean    @default(true)
+  deliveryFee   Float      @default(0)
   paymentDue    DateTime?
   lastPaymentAt DateTime?
   createdAt     DateTime   @default(now())
@@ -107,6 +108,7 @@ model Order {
   notes           String?
   status          String      @default("pending")
   deliveryType    String      @default("delivery")
+  deliveryFee     Float       @default(0)
   total           Float
   trackingToken   String?     @unique
   createdAt       DateTime    @default(now())

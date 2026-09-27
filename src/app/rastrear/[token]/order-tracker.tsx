@@ -13,6 +13,7 @@ type OrderItem = {
 type OrderTrackerProps = {
   status: string;
   deliveryType: "pickup" | "delivery";
+  deliveryFee?: number;
   customerName: string;
   createdAt: string;
   items: OrderItem[];
@@ -75,6 +76,7 @@ export function OrderTracker({
   createdAt,
   items,
   total,
+  deliveryFee = 0,
 }: OrderTrackerProps) {
   const router = useRouter();
   const lastRefresh = useRef(0);
@@ -197,6 +199,12 @@ export function OrderTracker({
             </li>
           ))}
         </ul>
+        {deliveryFee > 0 && (
+          <div className="flex items-center justify-between border-t border-border px-5 py-3 text-sm">
+            <span className="text-muted">Taxa de entrega</span>
+            <span className="tabular-nums">{formatCurrency(deliveryFee)}</span>
+          </div>
+        )}
         <div className="flex items-center justify-between border-t border-border px-5 py-3">
           <span className="text-sm text-muted">Total</span>
           <span className="font-semibold tabular-nums">
