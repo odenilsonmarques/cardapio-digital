@@ -60,6 +60,7 @@ export default async function OrdersPage() {
               status: order.status,
               statusLabel: statusLabels[order.status] ?? order.status,
               deliveryType: order.deliveryType,
+              deliveryFee: order.deliveryFee,
               total: order.total,
               createdAt: order.createdAt,
               items: order.items.map((i) => ({

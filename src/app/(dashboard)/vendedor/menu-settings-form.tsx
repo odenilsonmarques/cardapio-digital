@@ -20,6 +20,7 @@ export function MenuSettingsForm({
     slug: string;
     paymentInstructions: string | null;
     pixKey: string | null;
+    deliveryFee: number;
   } | null;
 }) {
   const [state, formAction, pending] = useActionState(
@@ -87,6 +88,21 @@ export function MenuSettingsForm({
           name="pixKey"
           defaultValue={menu?.pixKey ?? ""}
           placeholder="Ex.: 11-99999-9999 ou sua@email.com"
+        />
+      </Field>
+      <Field
+        label="Taxa de entrega"
+        htmlFor="deliveryFee"
+        hint="Valor cobrado a mais quando o cliente escolher Entrega. Retirada não paga taxa."
+      >
+        <Input
+          id="deliveryFee"
+          name="deliveryFee"
+          type="number"
+          min="0"
+          step="0.01"
+          defaultValue={menu?.deliveryFee ?? 0}
+          placeholder="Ex.: 5.00"
         />
       </Field>
       <div>

@@ -65,6 +65,9 @@ export async function checkoutAction(
 
   const { items, ...customer } = parsed.data;
 
+  const deliveryFee =
+    customer.deliveryType === "delivery" ? menu.deliveryFee : 0;
+
   const productIds = items.map((i) => i.productId);
   const products = await prisma.product.findMany({
     where: { id: { in: productIds }, available: true, category: { menuId: menu.id } },
@@ -85,10 +88,9 @@ export async function checkoutAction(
     };
   });
 
-  const total = orderItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const total =
+    orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0) +
+    deliveryFee;
 
   const order = await prisma.order.create({
     data: {
@@ -96,6 +98,7 @@ export async function checkoutAction(
       ...customer,
       total,
       deliveryType: customer.deliveryType,
+      deliveryFee,
       trackingToken: randomBytes(12).toString("hex"),
       items: { create: orderItems },
     },
